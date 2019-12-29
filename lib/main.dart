@@ -1,6 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'dart:math';
+
+factors(n)
+{
+  var factorsArr = [];
+  factorsArr.add(n);
+  factorsArr.add(1);
+  for(var test = n - 1; test >= sqrt(n).toInt(); test--)
+    if(n % test == 0)
+    {
+      factorsArr.add(test);
+      factorsArr.add(n / test);
+    }
+  return factorsArr.sublist(factorsArr.length-2);
+}
+
+
 
 void main() => runApp(MyApp());
 
@@ -59,8 +76,24 @@ class HomePageState extends State<HomePage> {
   var sizeX = 20.0;
   var sizeY = 24.0;
   var columnLen = 10;
-  var rowLen = 20;
+  var rowLen = 15;
 
+  @override
+  void initState() {
+    super.initState();
+
+    // Start listening to changes.
+//    ageController.addListener(_printLatestValue);
+    ageFinalController.addListener(_calculateAge);
+  }
+  
+  _calculateAge() {
+    var fact = factors(int.parse(ageFinalController.text));
+    print(fact);
+    columnLen = fact[0];
+    rowLen = fact[1];
+  }
+  
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -76,8 +109,8 @@ class HomePageState extends State<HomePage> {
           title: Text('Testing'),
         ),
         body: Center(
-            child: new Row(children: [
-              new Container(
+          child: new SingleChildScrollView(
+            child: new Container(
                   padding: const EdgeInsets.all(40.0),
                   child: new Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -99,53 +132,19 @@ class HomePageState extends State<HomePage> {
                           WhitelistingTextInputFormatter.digitsOnly
                         ], // Only numbers can be entered
                       ),
-//                      new Positioned(
-//                          bottom: 0.0,
-//                          left: 0.0,
-//                          right: 0.0,
-//                          top: 0.0,
-//                          child: new CustomPaint(
-//                            painter: new Sky(),
-//                          )),
-                    ],
-                  )
-              ),
-                new Row(children: [
-                  for (var i = 0; i < rowLen; i++)
-                    Column(children: <Widget>[
-                      for (var i = 0; i < columnLen; i++)
-                        new CustomPaint(
-                            size: Size(sizeX, sizeY),
-                            foregroundPainter: new HeartPainter(
-                              innerColor: Colors.white,
-                              outColor: Colors.black,
-                            )),
-              ]),
-          ])
-        ])));
-
-//    return new Scaffold(
-//      appBar: AppBar(
-//        // Here we take the value from the MyHomePage object that was created by
-//        // the App.build method, and use it to set our appbar title.
-//        title: Text(widget.title),
-//      ),
-//      backgroundColor: Colors.white,
-//        body: new Stack(
-//            children: <Widget>[
-//              new Positioned(
-//                  bottom: 0.0,
-//                  left: 0.0,
-//                  right: 0.0,
-//                  top: 0.0,
-//                  child: new CustomPaint(
-//                    painter: new Sky(),
-//                  )
-//              ),
-//            ]
-//        )
-
-//    );
+                    new Row(children: [
+                        for (var i = 0; i < rowLen; i++)
+                          Column(children: <Widget>[
+                            for (var i = 0; i < columnLen; i++)
+                              new CustomPaint(
+                                  size: Size(sizeX, sizeY),
+                                  foregroundPainter: new HeartPainter(
+                                    innerColor: Colors.white,
+                                    outColor: Colors.black,
+                                  )),
+                          ]),
+                      ])
+        ])))));
   }
 }
 
