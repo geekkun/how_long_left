@@ -74,6 +74,19 @@ class HomePageState extends State<HomePage> {
   var columnLen = 10;
   var rowLen = 15;
 
+  void _doSomething(String text) {
+    var fact = factors(int.parse(text));
+    var col = fact[0];
+    var row = fact[1].toInt();
+    print('$col, $row');
+    print(22/row);
+    print(22%row);
+    setState(() {
+      columnLen = col;
+      rowLen = row;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -85,7 +98,6 @@ class HomePageState extends State<HomePage> {
 
   _calculateAge() {
     var fact = factors(int.parse(ageFinalController.text));
-    print(fact);
     columnLen = fact[0];
     rowLen = fact[1];
   }
@@ -112,6 +124,18 @@ class HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           new TextField(
+                            decoration: new InputDecoration(
+                                labelText:
+                                "How many years are you planning to live?"),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: <TextInputFormatter>[
+                              WhitelistingTextInputFormatter.digitsOnly
+                            ],
+                            onChanged: (text) {
+                              _doSomething(text);
+                            }, // Only numbers can be entered
+                          ),
+                          new TextField(
                             controller: ageController,
                             decoration: new InputDecoration(
                                 labelText: "How old are you?"),
@@ -120,23 +144,31 @@ class HomePageState extends State<HomePage> {
                               WhitelistingTextInputFormatter.digitsOnly
                             ], // Only numbers can be entered
                           ),
-                          new TextField(
-                            decoration: new InputDecoration(
-                                labelText:
-                                    "How many years are you planning to live?"),
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                              WhitelistingTextInputFormatter.digitsOnly
-                            ], // Only numbers can be entered
-                          ),
-                          new Hearts(
-                            sizeX: sizeX,
-                            sizeY: sizeY,
-                            columnLen: columnLen,
-                            rowLen: rowLen,
-                            innerColor: Colors.white,
-                            outColor: Colors.red,
-                          )
+                          new RaisedButton(
+                              child: Text('Open route'),
+                              // Within the `FirstRoute` widget
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SecondRoute(
+                                            sizeX: sizeX,
+                                            sizeY: sizeY,
+                                            columnLen: columnLen,
+                                            rowLen: rowLen,
+                                            innerColor: Colors.white,
+                                            outColor: Colors.red,
+                                          )),
+                                );
+                              }),
+//                          new Hearts(
+//                            sizeX: sizeX,
+//                            sizeY: sizeY,
+//                            columnLen: columnLen,
+//                            rowLen: rowLen,
+//                            innerColor: Colors.white,
+//                            outColor: Colors.red,
+//                          )
 //                    new Row(children: [
 //                        for (var i = 0; i < rowLen; i++)
 //                          Column(children: <Widget>[
@@ -312,5 +344,115 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+class SecondRoute extends StatelessWidget {
+  final double sizeX;
+  final double sizeY;
+  final int columnLen;
+  final int rowLen;
+  final Color innerColor;
+  final Color outColor;
+
+  SecondRoute(
+      {Key key,
+      @required this.rowLen,
+      @required this.columnLen,
+      this.sizeX,
+      this.sizeY,
+      this.innerColor,
+      this.outColor})
+      : super(key: key);
+
+//  SecondRoute(
+//      {this.rowLen,
+//        this.columnLen,
+//        this.sizeX,
+//        this.sizeY,
+//        this.innerColor,
+//        this.outColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("Second Route"),
+        ),
+        body: Center(
+            child: new SingleChildScrollView(
+                child: new Container(
+                  padding: const EdgeInsets.all(40.0),
+                  child: new Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        new Hearts(
+                          sizeX: sizeX,
+                          sizeY: sizeY,
+                          columnLen: columnLen,
+                          rowLen: rowLen,
+                          innerColor: Colors.white,
+                          outColor: Colors.red,
+                        ),
+                        new RaisedButton(
+                          // Within the SecondRoute widget
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('Go back!'),
+                        ),
+                      ]),
+        ))));
+  }
+}
+
+class MyApp2 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Flutter'),
+        ),
+        body: MyWidget(),
+      ),
+    );
+  }
+}
+
+// widget class
+class MyWidget extends StatefulWidget {
+  @override
+  _MyWidgetState createState() => _MyWidgetState();
+}
+
+// state class
+// We will replace this class in each of the examples below
+class _MyWidgetState extends State<MyWidget> {
+  String _textString = 'Hello world';
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          _textString,
+          style: TextStyle(fontSize: 30),
+        ),
+        TextField(
+          //                       <--- TextField
+          onChanged: (text) {
+            _doSomething(text);
+          },
+        )
+      ],
+    );
+  }
+
+  void _doSomething(String text) {
+    setState(() {
+      _textString = text;
+    });
   }
 }
