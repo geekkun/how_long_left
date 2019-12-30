@@ -3,21 +3,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
 
-factors(n)
-{
+factors(n) {
   var factorsArr = [];
   factorsArr.add(n);
   factorsArr.add(1);
-  for(var test = n - 1; test >= sqrt(n).toInt(); test--)
-    if(n % test == 0)
-    {
+  for (var test = n - 1; test >= sqrt(n).toInt(); test--)
+    if (n % test == 0) {
       factorsArr.add(test);
       factorsArr.add(n / test);
     }
-  return factorsArr.sublist(factorsArr.length-2);
+  return factorsArr.sublist(factorsArr.length - 2);
 }
-
-
 
 void main() => runApp(MyApp());
 
@@ -86,14 +82,14 @@ class HomePageState extends State<HomePage> {
 //    ageController.addListener(_printLatestValue);
     ageFinalController.addListener(_calculateAge);
   }
-  
+
   _calculateAge() {
     var fact = factors(int.parse(ageFinalController.text));
     print(fact);
     columnLen = fact[0];
     rowLen = fact[1];
   }
-  
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -109,42 +105,85 @@ class HomePageState extends State<HomePage> {
           title: Text('Testing'),
         ),
         body: Center(
-          child: new SingleChildScrollView(
-            child: new Container(
-                  padding: const EdgeInsets.all(40.0),
-                  child: new Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      new TextField(
-                        controller: ageController,
-                        decoration:
-                            new InputDecoration(labelText: "How old are you?"),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          WhitelistingTextInputFormatter.digitsOnly
-                        ], // Only numbers can be entered
-                      ),
-                      new TextField(
-                        decoration: new InputDecoration(
-                            labelText: "How many years are you planning to live?"),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          WhitelistingTextInputFormatter.digitsOnly
-                        ], // Only numbers can be entered
-                      ),
-                    new Row(children: [
-                        for (var i = 0; i < rowLen; i++)
-                          Column(children: <Widget>[
-                            for (var i = 0; i < columnLen; i++)
-                              new CustomPaint(
-                                  size: Size(sizeX, sizeY),
-                                  foregroundPainter: new HeartPainter(
-                                    innerColor: Colors.white,
-                                    outColor: Colors.black,
-                                  )),
-                          ]),
-                      ])
-        ])))));
+            child: new SingleChildScrollView(
+                child: new Container(
+                    padding: const EdgeInsets.all(40.0),
+                    child: new Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          new TextField(
+                            controller: ageController,
+                            decoration: new InputDecoration(
+                                labelText: "How old are you?"),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: <TextInputFormatter>[
+                              WhitelistingTextInputFormatter.digitsOnly
+                            ], // Only numbers can be entered
+                          ),
+                          new TextField(
+                            decoration: new InputDecoration(
+                                labelText:
+                                    "How many years are you planning to live?"),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: <TextInputFormatter>[
+                              WhitelistingTextInputFormatter.digitsOnly
+                            ], // Only numbers can be entered
+                          ),
+                          new Hearts(
+                            sizeX: sizeX,
+                            sizeY: sizeY,
+                            columnLen: columnLen,
+                            rowLen: rowLen,
+                            innerColor: Colors.white,
+                            outColor: Colors.red,
+                          )
+//                    new Row(children: [
+//                        for (var i = 0; i < rowLen; i++)
+//                          Column(children: <Widget>[
+//                            for (var i = 0; i < columnLen; i++)
+//                              new CustomPaint(
+//                                  size: Size(sizeX, sizeY),
+//                                  foregroundPainter: new HeartPainter(
+//                                    innerColor: Colors.white,
+//                                    outColor: Colors.black,
+//                                  )),
+//                          ]),
+//                      ])
+                        ])))));
+  }
+}
+
+class Hearts extends StatelessWidget {
+  final double sizeX;
+  final double sizeY;
+  final int columnLen;
+  final int rowLen;
+  final Color innerColor;
+  final Color outColor;
+
+  Hearts(
+      {this.rowLen,
+      this.columnLen,
+      this.sizeX,
+      this.sizeY,
+      this.innerColor,
+      this.outColor});
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return new Row(children: [
+      for (var i = 0; i < rowLen; i++)
+        Column(children: <Widget>[
+          for (var i = 0; i < columnLen; i++)
+            new CustomPaint(
+                size: Size(sizeX, sizeY),
+                foregroundPainter: new HeartPainter(
+                  innerColor: innerColor,
+                  outColor: outColor,
+                )),
+        ]),
+    ]);
   }
 }
 
